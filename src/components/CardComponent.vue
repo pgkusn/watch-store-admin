@@ -65,7 +65,7 @@ const submit = e => {
   <component
     :is="is"
     :class="componentClass"
-    class="bg-white border dark:border-gray-800"
+    class="bg-white border dark:border-gray-800 flex flex-col"
     @submit="submit"
   >
     <header
@@ -102,7 +102,7 @@ const submit = e => {
     </div>
     <div
       v-else
-      :class="{'p-6':!hasTable}"
+      :class="[{'p-6':!hasTable}, 'flex-grow overflow-auto']"
     >
       <slot />
     </div>

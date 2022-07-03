@@ -25,6 +25,11 @@ export default [
   'Examples',
   [
     {
+      to: '/products',
+      label: 'Products',
+      icon: mdiTable
+    },
+    {
       to: '/tables',
       label: 'Tables',
       icon: mdiTable
