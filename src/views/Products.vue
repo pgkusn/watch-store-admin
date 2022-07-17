@@ -6,7 +6,6 @@
       <table>
         <thead>
           <tr>
-            <th></th>
             <th>商品圖片</th>
             <th>商品名稱</th>
             <th>品牌</th>
@@ -20,7 +19,6 @@
             :key="item.id"
             :class="['lg:hover:bg-gray-100', index % 2 === 0 ? 'lg:bg-gray-50' : '']"
           >
-            <checkbox-cell @checked="checked($event, item)" />
             <td data-label="商品圖片">
               <img class="h-24 w-24 object-cover" :src="item.url" :alt="item.name" />
             </td>
@@ -124,8 +122,7 @@
     @confirm="closeModal('delete', deleteItem)"
     @cancel="closeModal('delete')"
   >
-    <p>Lorem ipsum dolor sit amet <b>adipiscing elit</b></p>
-    <p>This is sample modal</p>
+    <p>確定要刪除<strong>「{{ currentItem.data.name }}」</strong>？</p>
   </modal-box>
 </template>
 
@@ -176,25 +173,6 @@ const closeModal = async (key, fn) => {
   currentItem.data = ''
 }
 
-// checked items
-const checkedRows = ref([])
-const checked = (isChecked, item) => {
-  if (isChecked) {
-    checkedRows.value.push(item)
-  } else {
-    checkedRows.value = remove(checkedRows.value, row => row.id === item.id)
-  }
-}
-const remove = (arr, cb) => {
-  const newArr = []
-  arr.forEach(item => {
-    if (!cb(item)) {
-      newArr.push(item)
-    }
-  })
-  return newArr
-}
-
 // pagination
 const perPage = ref(10)
 const currentPage = ref(0)
@@ -229,23 +207,6 @@ const brandOptions = computed(() =>
     label: item.fullBrand,
   }))
 )
-
-const getPrice = ({ price, discount = 1 }) =>
-  formatPrice(discount ? Math.floor(price * discount) : 0)
-const updateItem = async () => {
-  try {
-    await uploadImage()
-    await setImageUrl()
-    await productStore.updateProduct(currentItem)
-    await productStore.getProducts()
-  } catch (error) {
-    console.error(error)
-  }
-}
-// TODO: delete
-const deleteItem = async () => {
-  console.log(currentItem)
-}
 
 // images
 const firebaseConfig = {
@@ -283,6 +244,31 @@ const setImageUrl = () => {
       if (count === files.value.length) resolve()
     })
   })
+}
+
+const getPrice = ({ price, discount = 1 }) =>
+  formatPrice(discount ? Math.floor(price * discount) : 0)
+const updateItem = async () => {
+  try {
+    await uploadImage()
+    await setImageUrl()
+    await productStore.updateProduct(currentItem)
+    await productStore.getProducts()
+  } catch (error) {
+    console.error(error)
+  }
+}
+const deleteItem = async () => {
+  try {
+    await productStore.deleteProduct(currentItem.id)
+    await productStore.getProducts()
+    // 當前頁面沒有資料時，回到上一頁
+    if (itemsPaginated.value.length === 0 && currentPage.value > 0) {
+      currentPage.value = currentPage.value - 1
+    }
+  } catch (error) {
+    console.error(error)
+  }
 }
 
 onMounted(() => {

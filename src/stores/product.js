@@ -4,6 +4,8 @@ import {
   apiGetProduct,
   apiPatchProducts,
   apiPatchProduct,
+  apiDeleteProducts,
+  apiDeleteProduct,
 } from '@/api/product'
 
 export const useProductStore = defineStore('product', () => {
@@ -63,6 +65,16 @@ export const useProductStore = defineStore('product', () => {
       throw error
     }
   }
+  const deleteProduct = async id => {
+    try {
+      return await Promise.all([
+        apiDeleteProducts(id),
+        apiDeleteProduct(id)
+      ])
+    } catch (error) {
+      throw error
+    }
+  }
 
   return {
     brands,
@@ -71,5 +83,6 @@ export const useProductStore = defineStore('product', () => {
     getProducts,
     getProduct,
     updateProduct,
+    deleteProduct,
   }
 })
