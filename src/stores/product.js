@@ -21,7 +21,7 @@ export const useProductStore = defineStore('product', () => {
       }))
       brands.value = newData
     } catch (error) {
-      console.error(error)
+      throw error
     }
   }
   const getProducts = async () => {

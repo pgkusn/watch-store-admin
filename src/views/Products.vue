@@ -122,7 +122,9 @@
     @confirm="closeModal('delete', deleteItem)"
     @cancel="closeModal('delete')"
   >
-    <p>確定要刪除<strong>「{{ currentItem.data.name }}」</strong>？</p>
+    <p>
+      確定要刪除<strong>「{{ currentItem.data.name }}」</strong>？
+    </p>
   </modal-box>
 </template>
 
@@ -139,7 +141,7 @@ import { formatPrice } from '@/composition/formatPrice'
 const mainStore = useMainStore()
 const productStore = useProductStore()
 
-const { darkMode } = storeToRefs(mainStore)
+const { darkMode, notificationState } = storeToRefs(mainStore)
 const { products, brands } = storeToRefs(productStore)
 const currentItem = reactive({
   id: '',
@@ -165,8 +167,12 @@ const openModal = async ({ id, brand, fullBrand, price, discount = 1 }, key) => 
 const closeModal = async (key, fn) => {
   if (fn) {
     await fn()
-    // TODO: Add notifications (UI)
-    console.log(`${key} 更新成功`)
+    notificationState.value.type = 'success'
+    notificationState.value.message = key === 'info' ? '修改成功' : '刪除成功'
+    setTimeout(() => {
+      notificationState.value.type = ''
+      notificationState.value.message = ''
+    }, 2000)
   }
   isModalActive[key] = false
   currentItem.id = ''
@@ -271,8 +277,11 @@ const deleteItem = async () => {
   }
 }
 
-onMounted(() => {
-  productStore.getProducts()
-  productStore.getBrands()
+onMounted(async () => {
+  try {
+    await Promise.all([productStore.getProducts(), productStore.getBrands()])
+  } catch (error) {
+    console.log(error)
+  }
 })
 </script>

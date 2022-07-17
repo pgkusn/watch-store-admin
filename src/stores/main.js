@@ -44,7 +44,12 @@ export const useMainStore = defineStore('main', {
 
     /* Sample data (commonly used) */
     clients: [],
-    history: []
+    history: [],
+
+    notificationState: {
+      type: '',
+      message: '',
+    },
   }),
   actions: {
     setUser (payload) {

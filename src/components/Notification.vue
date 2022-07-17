@@ -12,7 +12,10 @@ const props = defineProps({
     type: String,
     default: null
   },
-  outline: Boolean,
+  outline: {
+    type: Boolean,
+    default: false
+  },
   color: {
     type: String,
     required: true
