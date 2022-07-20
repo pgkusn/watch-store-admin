@@ -1,4 +1,7 @@
+import { defineStore, acceptHMRUpdate } from 'pinia'
+
 import {
+  apiPostProducts,
   apiGetBrands,
   apiGetProducts,
   apiGetProduct,
@@ -12,11 +15,31 @@ export const useProductStore = defineStore('product', () => {
   const brands = ref([])
   const products = ref([])
 
+  const createProduct = async data => {
+    try {
+      const postData = {
+        ...data,
+        url: data.imageUrl[0],
+      }
+      delete postData.imageUrl
+      const { name: id } = await apiPostProducts(postData)
+
+      const patchData = {
+        description: data.description,
+        imageUrl: data.imageUrl,
+        name: data.name,
+        price: data.price * data.discount,
+      }
+      return await apiPatchProduct(id, patchData)
+    } catch (error) {
+      throw error
+    }
+  }
   const getBrands = async () => {
     try {
-      const { data } = await apiGetBrands()
-      const newData = Object.keys(data).map(key => ({
-        ...data[key],
+      const res = await apiGetBrands()
+      const newData = Object.keys(res).map(key => ({
+        ...res[key],
         id: key,
       }))
       brands.value = newData
@@ -26,9 +49,9 @@ export const useProductStore = defineStore('product', () => {
   }
   const getProducts = async () => {
     try {
-      const { data } = await apiGetProducts()
-      const newData = Object.keys(data).map(key => ({
-        ...data[key],
+      const res = await apiGetProducts()
+      const newData = Object.keys(res).map(key => ({
+        ...res[key],
         id: key,
       }))
       products.value = newData
@@ -50,7 +73,7 @@ export const useProductStore = defineStore('product', () => {
       name: data.name,
       price: data.price,
       discount: data.discount,
-      url: data.imageUrl[0]
+      url: data.imageUrl[0],
     }
     const productData = {
       price: Math.floor(data.price * data.discount),
@@ -67,10 +90,7 @@ export const useProductStore = defineStore('product', () => {
   }
   const deleteProduct = async id => {
     try {
-      return await Promise.all([
-        apiDeleteProducts(id),
-        apiDeleteProduct(id)
-      ])
+      return await Promise.all([apiDeleteProducts(id), apiDeleteProduct(id)])
     } catch (error) {
       throw error
     }
@@ -79,6 +99,7 @@ export const useProductStore = defineStore('product', () => {
   return {
     brands,
     products,
+    createProduct,
     getBrands,
     getProducts,
     getProduct,
@@ -86,3 +107,7 @@ export const useProductStore = defineStore('product', () => {
     deleteProduct,
   }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useProductStore, import.meta.hot))
+}

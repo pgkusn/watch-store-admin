@@ -1,6 +1,5 @@
 import { mount } from '@vue/test-utils'
 import { createTestingPinia } from '@pinia/testing'
-import ModalBox from '@/components/ModalBox.vue'
 import Products from './Products.vue'
 import { useProductStore } from '@/stores/product'
 

@@ -1,5 +1,12 @@
 <template>
-  <hero-bar>Products</hero-bar>
+  <section
+    class="border-t border-b border-gray-100 bg-white p-6 dark:border-gray-900 dark:bg-gray-900/70 dark:text-white"
+  >
+    <level>
+      <h1 class="text-3xl font-semibold leading-tight">Products</h1>
+      <jb-button color="white" label="新增商品" @click="openCreateModal" />
+    </level>
+  </section>
 
   <main-section>
     <card-component class="mb-6" has-table>
@@ -61,33 +68,33 @@
     </card-component>
   </main-section>
 
-  <!-- product info -->
+  <!-- 新增商品 -->
   <modal-box
-    v-model="isModalActive.info"
-    title="修改商品"
-    @confirm="closeModal('info', updateItem)"
-    @cancel="closeModal('info')"
+    v-model="isModalActive.create"
+    title="新增商品"
+    @confirm="createProduct"
+    @cancel="onCreateModalCancel"
   >
-    <template v-if="isModalActive.info">
+    <template v-if="isModalActive.create">
       <field label="名稱" class="mb-0">
-        <control v-model.trim="currentItem.data.name" type="text" />
+        <control v-model.trim="newProduct.name" type="text" />
       </field>
       <field label="品牌">
         <control v-model="brandSelected" :options="brandOptions" />
       </field>
       <field label="描述">
-        <control v-model.trim="currentItem.data.description" type="textarea" />
+        <control v-model.trim="newProduct.description" type="textarea" />
       </field>
       <div
         class="flex items-center gap-4 after:self-end after:leading-[48px] after:content-['='attr(data-total)]"
-        :data-total="getPrice(currentItem.data)"
+        :data-total="getPrice(newProduct)"
       >
         <field label="原價" class="mb-0">
-          <control v-model.number="currentItem.data.price" type="text" />
+          <control v-model.number="newProduct.price" type="text" />
         </field>
         <field label="折扣" class="mb-0">
           <input
-            v-model="currentItem.data.discount"
+            v-model="newProduct.discount"
             type="number"
             min="0"
             max="1"
@@ -98,14 +105,14 @@
       </div>
       <field label="上傳圖片" class="mb-0">
         <div
-          v-for="(url, index) in currentItem.data.imageUrl"
+          v-for="(url, index) in newProduct.imageUrl"
           :key="url"
           class="mt-4 flex items-center gap-4 first:mt-0"
         >
           <img
-            class="h-20 w-20 object-cover"
             :src="previewUrl[index] || url"
-            :alt="currentItem.data.name"
+            class="h-20 w-20 object-cover"
+            :alt="newProduct.name"
           />
           <file-picker v-model="files[index]" color="white" />
         </div>
@@ -113,17 +120,69 @@
     </template>
   </modal-box>
 
-  <!-- confirm delete -->
+  <!-- 修改商品 -->
+  <modal-box
+    v-model="isModalActive.info"
+    title="修改商品"
+    @confirm="updateProduct"
+    @cancel="resetState"
+  >
+    <template v-if="isModalActive.info">
+      <field label="名稱" class="mb-0">
+        <control v-model.trim="currentProduct.data.name" type="text" />
+      </field>
+      <field label="品牌">
+        <control v-model="brandSelected" :options="brandOptions" />
+      </field>
+      <field label="描述">
+        <control v-model.trim="currentProduct.data.description" type="textarea" />
+      </field>
+      <div
+        class="flex items-center gap-4 after:self-end after:leading-[48px] after:content-['='attr(data-total)]"
+        :data-total="getPrice(currentProduct.data)"
+      >
+        <field label="原價" class="mb-0">
+          <control v-model.number="currentProduct.data.price" type="text" />
+        </field>
+        <field label="折扣" class="mb-0">
+          <input
+            v-model="currentProduct.data.discount"
+            type="number"
+            min="0"
+            max="1"
+            step="0.01"
+            class="h-12 rounded border-gray-700"
+          />
+        </field>
+      </div>
+      <field label="上傳圖片" class="mb-0">
+        <div
+          v-for="(url, index) in currentProduct.data.imageUrl"
+          :key="url"
+          class="mt-4 flex items-center gap-4 first:mt-0"
+        >
+          <img
+            class="h-20 w-20 object-cover"
+            :src="previewUrl[index] || url"
+            :alt="currentProduct.data.name"
+          />
+          <file-picker v-model="files[index]" color="white" />
+        </div>
+      </field>
+    </template>
+  </modal-box>
+
+  <!-- 刪除商品 -->
   <modal-box
     v-model="isModalActive.delete"
     large-title="Please confirm"
     button="danger"
     has-cancel
-    @confirm="closeModal('delete', deleteItem)"
-    @cancel="closeModal('delete')"
+    @confirm="deleteProduct"
+    @cancel="resetState"
   >
     <p>
-      確定要刪除<strong>「{{ currentItem.data.name }}」</strong>？
+      確定要刪除<strong>「{{ currentProduct.data.name }}」</strong>？
     </p>
   </modal-box>
 </template>
@@ -143,40 +202,23 @@ const productStore = useProductStore()
 
 const { darkMode, notificationState } = storeToRefs(mainStore)
 const { products, brands } = storeToRefs(productStore)
-const currentItem = reactive({
+const currentProduct = reactive({
   id: '',
   data: {},
 })
 
-// modal
-const isModalActive = reactive({
-  info: false,
-  delete: false,
-})
-const openModal = async ({ id, brand, fullBrand, price, discount = 1 }, key) => {
-  try {
-    const { data } = await productStore.getProduct(id)
-    isModalActive[key] = true
-    currentItem.id = id
-    currentItem.data = { ...data, brand, fullBrand, price, discount }
-    files.value = new Array(data.imageUrl.length).fill(null)
-  } catch (error) {
-    console.error(error)
-  }
+const getPrice = ({ price, discount = 1 }) =>
+  formatPrice(discount ? Math.floor(price * discount) : 0)
+const setNotification = (type, message) => {
+  notificationState.value = { type, message }
+  setTimeout(() => {
+    notificationState.value = {}
+  }, 2000)
 }
-const closeModal = async (key, fn) => {
-  if (fn) {
-    await fn()
-    notificationState.value.type = 'success'
-    notificationState.value.message = key === 'info' ? '修改成功' : '刪除成功'
-    setTimeout(() => {
-      notificationState.value.type = ''
-      notificationState.value.message = ''
-    }, 2000)
-  }
-  isModalActive[key] = false
-  currentItem.id = ''
-  currentItem.data = ''
+const resetState = () => {
+  currentProduct.id = ''
+  currentProduct.data = {}
+  files.value.length = 0
 }
 
 // pagination
@@ -195,16 +237,45 @@ const pagesList = computed(() => {
   return pagesList
 })
 
-// modal brand select
+// modal display
+const isModalActive = reactive({
+  create: false,
+  info: false,
+  delete: false,
+})
+const openModal = async ({ id, brand, fullBrand, price, discount = 1 }, key) => {
+  try {
+    const product = await productStore.getProduct(id)
+    isModalActive[key] = true
+    currentProduct.id = id
+    currentProduct.data = { ...product, brand, fullBrand, price, discount }
+    files.value = new Array(product.imageUrl.length).fill(null)
+  } catch (error) {
+    console.error(error)
+  }
+}
+
+// modal 品牌選單
 const brandSelected = computed({
-  get: () => ({
-    id: brands.value.find(item => item.brand === currentItem.data.brand)?.id,
-    label: currentItem.data.fullBrand,
-  }),
+  get() {
+    if (isModalActive.create) {
+      return brandOptions.value[0]
+    } else {
+      return {
+        id: brands.value.find(item => item.brand === currentProduct.data.brand)?.id,
+        label: currentProduct.data.fullBrand,
+      }
+    }
+  },
   set({ id }) {
     const { brand, fullBrand } = brands.value.find(item => item.id === id)
-    currentItem.data.brand = brand
-    currentItem.data.fullBrand = fullBrand
+    if (isModalActive.create) {
+      newProduct.brand = brand
+      newProduct.fullBrand = fullBrand
+    } else {
+      currentProduct.data.brand = brand
+      currentProduct.data.fullBrand = fullBrand
+    }
   },
 })
 const brandOptions = computed(() =>
@@ -214,7 +285,7 @@ const brandOptions = computed(() =>
   }))
 )
 
-// images
+// 上傳圖片
 const firebaseConfig = {
   apiKey: 'AIzaSyCe0etdPskhxSxGh0w_IdZt3FDqcDQWbOo',
   authDomain: 'perfume-8b21d.firebaseapp.com',
@@ -232,19 +303,23 @@ const previewUrl = computed(() =>
 const uploadImage = () => {
   const promises = files.value.map(file => {
     if (!file) return null
-    const fileRef = storageRef(storage, `product/${currentItem.id}/${file.name}`)
+    const fileRef = storageRef(storage, file.name)
     return uploadBytes(fileRef, file)
   })
   return Promise.all(promises)
 }
-const setImageUrl = () => {
+const getUploadedImageUrl = () => {
   return new Promise(resolve => {
     let count = 0
-    files.value.forEach(async (file, index) => {
+    Array.from(files.value).forEach(async (file, index) => {
       if (file) {
-        const fileRef = storageRef(storage, `product/${currentItem.id}/${file.name}`)
+        const fileRef = storageRef(storage, file.name)
         const url = await getDownloadURL(fileRef).then(url => url)
-        currentItem.data.imageUrl[index] = url
+        if (currentProduct.data.imageUrl) {
+          currentProduct.data.imageUrl[index] = url // 修改
+        } else {
+          newProduct.imageUrl[index] = url // 新增
+        }
       }
       count++
       if (count === files.value.length) resolve()
@@ -252,36 +327,103 @@ const setImageUrl = () => {
   })
 }
 
-const getPrice = ({ price, discount = 1 }) =>
-  formatPrice(discount ? Math.floor(price * discount) : 0)
-const updateItem = async () => {
+// 新增商品
+const newProduct = reactive({
+  name: '',
+  brand: '',
+  fullBrand: '',
+  description: '',
+  price: '',
+  discount: 1,
+  imageUrl: [
+    'https://fakeimg.pl/1080x1080/?text=photo',
+    'https://fakeimg.pl/1080x1080/?text=photo',
+    'https://fakeimg.pl/1080x1080/?text=photo',
+    'https://fakeimg.pl/1080x1080/?text=photo',
+  ],
+})
+const openCreateModal = () => {
+  isModalActive.create = true
+  const { id, label } = brandOptions.value[0]
+  newProduct.brand = brands.value.find(item => item.id === id)?.brand
+  newProduct.fullBrand = label
+}
+const createProduct = async () => {
   try {
-    await uploadImage()
-    await setImageUrl()
-    await productStore.updateProduct(currentItem)
+    if (files.value.length > 0) {
+      await uploadImage()
+      await getUploadedImageUrl()
+    }
+    await productStore.createProduct(newProduct)
     await productStore.getProducts()
+    setNotification('success', '新增成功')
+    resetState()
+    resetNewProduct()
   } catch (error) {
     console.error(error)
   }
 }
-const deleteItem = async () => {
+const onCreateModalCancel = () => {
+  resetState()
+  resetNewProduct()
+}
+const resetNewProduct = () => {
+  Object.assign(newProduct, {
+    name: '',
+    brand: '',
+    fullBrand: '',
+    description: '',
+    price: '',
+    discount: 1,
+    imageUrl: [
+      'https://fakeimg.pl/1080x1080/?text=photo',
+      'https://fakeimg.pl/1080x1080/?text=photo',
+      'https://fakeimg.pl/1080x1080/?text=photo',
+      'https://fakeimg.pl/1080x1080/?text=photo',
+    ],
+  })
+  files.value.length = 0
+}
+
+// 取得品牌及商品
+const getBrandsAndProducts = async () => {
   try {
-    await productStore.deleteProduct(currentItem.id)
+    await Promise.all([productStore.getBrands(), productStore.getProducts()])
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+// 更新商品
+const updateProduct = async () => {
+  try {
+    await uploadImage()
+    await getUploadedImageUrl()
+    await productStore.updateProduct(currentProduct)
     await productStore.getProducts()
-    // 當前頁面沒有資料時，回到上一頁
-    if (itemsPaginated.value.length === 0 && currentPage.value > 0) {
-      currentPage.value = currentPage.value - 1
-    }
+    setNotification('success', '修改成功')
   } catch (error) {
     console.error(error)
   }
 }
 
-onMounted(async () => {
+// 刪除商品
+const deleteProduct = async () => {
   try {
-    await Promise.all([productStore.getProducts(), productStore.getBrands()])
+    await productStore.deleteProduct(currentProduct.id)
+    await productStore.getProducts()
+    // 當前頁面沒有資料時，回到上一頁
+    if (itemsPaginated.value.length === 0 && currentPage.value > 0) {
+      currentPage.value = currentPage.value - 1
+    }
+    setNotification('success', '刪除成功')
+    resetState()
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
+}
+
+onMounted(() => {
+  getBrandsAndProducts()
 })
 </script>

@@ -25,7 +25,10 @@ mainStore.fetch('history')
 mainStore.setStyle(localStorage[styleKey] ?? 'basic')
 
 /* Dark mode */
-if ((!localStorage[darkModeKey] && window.matchMedia('(prefers-color-scheme: dark)').matches) || localStorage[darkModeKey] === '1') {
+if (
+  (!localStorage[darkModeKey] && window.matchMedia('(prefers-color-scheme: dark)').matches) ||
+  localStorage[darkModeKey] === '1'
+) {
   mainStore.setDarkMode(true)
 }
 
