@@ -58,7 +58,6 @@
               :label="page + 1"
               :outline="darkMode"
               small
-              ref="$edit"
               @click="currentPage = page"
             />
           </jb-buttons>
@@ -243,13 +242,13 @@ const isModalActive = reactive({
   info: false,
   delete: false,
 })
-const openModal = async ({ id, brand, fullBrand, price, discount = 1 }, key) => {
+const openModal = async ({ id, ...data }, key) => {
   try {
-    const product = await productStore.getProduct(id)
+    const { description, imageUrl } = await productStore.getProduct(id)
     isModalActive[key] = true
     currentProduct.id = id
-    currentProduct.data = { ...product, brand, fullBrand, price, discount }
-    files.value = new Array(product.imageUrl.length).fill(null)
+    currentProduct.data = { ...data, description, imageUrl }
+    files.value = new Array(imageUrl.length).fill(null)
   } catch (error) {
     console.error(error)
   }
@@ -317,6 +316,7 @@ const getUploadedImageUrl = () => {
         const url = await getDownloadURL(fileRef).then(url => url)
         if (currentProduct.data.imageUrl) {
           currentProduct.data.imageUrl[index] = url // 修改
+          currentProduct.data.url = imageUrl[0]
         } else {
           newProduct.imageUrl[index] = url // 新增
         }
@@ -341,6 +341,9 @@ const newProduct = reactive({
     'https://fakeimg.pl/1080x1080/?text=photo',
     'https://fakeimg.pl/1080x1080/?text=photo',
   ],
+  get url() {
+    return this.imageUrl[0] // cover
+  }
 })
 const openCreateModal = () => {
   isModalActive.create = true
@@ -394,7 +397,7 @@ const getBrandsAndProducts = async () => {
   }
 }
 
-// 更新商品
+// 修改商品
 const updateProduct = async () => {
   try {
     await uploadImage()

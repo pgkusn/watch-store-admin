@@ -2,7 +2,6 @@ import { defineStore, acceptHMRUpdate } from 'pinia'
 
 import {
   apiPostProducts,
-  apiGetBrands,
   apiGetProducts,
   apiGetProduct,
   apiPatchProducts,
@@ -10,6 +9,7 @@ import {
   apiDeleteProducts,
   apiDeleteProduct,
 } from '@/api/product'
+import { apiGetBrands } from '@/api/brand'
 
 export const useProductStore = defineStore('product', () => {
   const brands = ref([])
@@ -17,20 +17,17 @@ export const useProductStore = defineStore('product', () => {
 
   const createProduct = async data => {
     try {
-      const postData = {
-        ...data,
-        url: data.imageUrl[0],
-      }
+      const postData = { ...data }
       delete postData.imageUrl
+      
       const { name: id } = await apiPostProducts(postData)
-
-      const patchData = {
+      
+      return await apiPatchProduct(id, {
         description: data.description,
         imageUrl: data.imageUrl,
         name: data.name,
         price: data.price * data.discount,
-      }
-      return await apiPatchProduct(id, patchData)
+      })
     } catch (error) {
       throw error
     }
@@ -56,7 +53,7 @@ export const useProductStore = defineStore('product', () => {
       }))
       products.value = newData
     } catch (error) {
-      console.error(error)
+      throw error
     }
   }
   const getProduct = async id => {
@@ -67,18 +64,16 @@ export const useProductStore = defineStore('product', () => {
     }
   }
   const updateProduct = async ({ id, data }) => {
-    const productsData = {
-      brand: data.brand,
-      fullBrand: data.fullBrand,
-      name: data.name,
-      price: data.price,
-      discount: data.discount,
-      url: data.imageUrl[0],
-    }
+    const productsData = { ...data }
+    delete productsData.imageUrl
+    
     const productData = {
-      price: Math.floor(data.price * data.discount),
+      description: data.description,
       imageUrl: data.imageUrl,
+      name: data.name,
+      price: Math.floor(data.price * data.discount),
     }
+    
     try {
       return await Promise.all([
         apiPatchProducts(id, productsData),

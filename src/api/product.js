@@ -29,7 +29,6 @@ productRequest.interceptors.response.use(
 )
 
 export const apiPostProducts = data => productRequest.post('products.json', data).then(res => res.data)
-export const apiGetBrands = () => productRequest.get('brands.json').then(res => res.data)
 export const apiGetProducts = () => productRequest.get('products.json').then(res => res.data)
 export const apiGetProduct = id => productRequest.get(`product/${id}.json`).then(res => res.data)
 export const apiPatchProducts = (id, data) => productRequest.patch(`products/${id}.json`, data).then(res => res.data)
