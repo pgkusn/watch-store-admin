@@ -32,6 +32,14 @@ const routes = [
   },
   {
     meta: {
+      title: 'Brands'
+    },
+    path: '/brands',
+    name: 'brands',
+    component: () => import(/* webpackChunkName: "brands" */ '@/views/Brands.vue')
+  },
+  {
+    meta: {
       title: 'Tables'
     },
     path: '/tables',

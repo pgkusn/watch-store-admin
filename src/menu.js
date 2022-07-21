@@ -30,6 +30,11 @@ export default [
       icon: mdiTable
     },
     {
+      to: '/brands',
+      label: 'Brands',
+      icon: mdiTable
+    },
+    {
       to: '/tables',
       label: 'Tables',
       icon: mdiTable
