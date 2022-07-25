@@ -8,6 +8,8 @@ import FooterBar from '@/components/FooterBar.vue'
 import Overlay from '@/components/Overlay.vue'
 
 const mainStore = useMainStore()
+const route = useRoute()
+
 const { isAsideLgActive, notificationState, isAsideMobileExpanded } = storeToRefs(mainStore)
 
 mainStore.setUser({
@@ -32,8 +34,9 @@ const overlayClick = () => {
     <div
       v-if="notificationState.type"
       :class="[
-        'fixed inset-x-6 top-[70px] lg:left-6 xl:left-[16.5rem]',
+        'fixed inset-x-0 top-[70px] md:inset-x-6 lg:left-6 xl:left-[16.5rem]',
         { 'left-[16.5rem]': isAsideMobileExpanded },
+        { 'md:!inset-x-0 mx-auto max-w-xl': route.name === 'login' },
       ]"
     >
       <notification

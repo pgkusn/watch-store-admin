@@ -4,23 +4,31 @@ import { useRouter } from 'vue-router'
 import { mdiAccount, mdiAsterisk } from '@mdi/js'
 import FullScreenSection from '@/components/FullScreenSection.vue'
 import CardComponent from '@/components/CardComponent.vue'
-import CheckRadioPicker from '@/components/CheckRadioPicker.vue'
 import Field from '@/components/Field.vue'
 import Control from '@/components/Control.vue'
 import Divider from '@/components/Divider.vue'
 import JbButton from '@/components/JbButton.vue'
 import JbButtons from '@/components/JbButtons.vue'
+import { apiPostLogin } from "@/api/auth";
+import { useMainStore } from "@/stores/main";
 
 const form = reactive({
-  login: 'john.doe',
-  pass: 'highly-secure-password-fYjUw-',
-  remember: ['remember']
+  email: 'email@example.com',
+  password: 'Password',
 })
 
 const router = useRouter()
+const mainStore = useMainStore()
 
-const submit = () => {
-  router.push('/dashboard')
+const submit = async () => {
+  try {
+    const { idToken } = await apiPostLogin(form)
+    localStorage.setItem('idToken', idToken)
+    mainStore.notificationState = {}
+    router.push({ name: 'products' })
+  } catch (error) {
+    console.error(error)
+  }
 }
 </script>
 
@@ -40,10 +48,10 @@ const submit = () => {
         help="Please enter your login"
       >
         <control
-          v-model="form.login"
+          v-model="form.email"
           :icon="mdiAccount"
-          name="login"
-          autocomplete="username"
+          name="email"
+          autocomplete="email"
         />
       </field>
 
@@ -52,19 +60,13 @@ const submit = () => {
         help="Please enter your password"
       >
         <control
-          v-model="form.pass"
+          v-model="form.password"
           :icon="mdiAsterisk"
           type="password"
           name="password"
           autocomplete="current-password"
         />
       </field>
-
-      <check-radio-picker
-        v-model="form.remember"
-        name="remember"
-        :options="{ remember: 'Remember' }"
-      />
 
       <divider />
 
@@ -73,12 +75,6 @@ const submit = () => {
           type="submit"
           color="info"
           label="Login"
-        />
-        <jb-button
-          to="/dashboard"
-          color="info"
-          outline
-          label="Back"
         />
       </jb-buttons>
     </card-component>

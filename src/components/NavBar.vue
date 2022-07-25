@@ -24,6 +24,7 @@ import Divider from '@/components/Divider.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import Icon from '@/components/Icon.vue'
 import NavBarSearch from '@/components/NavBarSearch.vue'
+import router from '@/router'
 
 const mainStore = useMainStore()
 
@@ -56,7 +57,8 @@ const menuOpenLg = () => {
 }
 
 const logout = () => {
-  //
+  localStorage.removeItem('idToken')
+  router.push({ name: 'login' })
 }
 </script>
 
