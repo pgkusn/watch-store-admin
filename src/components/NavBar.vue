@@ -88,9 +88,9 @@ const logout = () => {
           size="24"
         />
       </nav-bar-item>
-      <nav-bar-item>
+      <!-- <nav-bar-item>
         <nav-bar-search />
-      </nav-bar-item>
+      </nav-bar-item> -->
     </div>
     <div class="flex-none items-stretch flex h-14 lg:hidden">
       <nav-bar-item @click.prevent="menuNavBarToggle">
@@ -108,7 +108,7 @@ const logout = () => {
       <div
         class="max-h-screen-menu overflow-y-auto lg:overflow-visible lg:flex lg:items-stretch lg:justify-end lg:ml-auto"
       >
-        <nav-bar-menu has-divider>
+        <!-- <nav-bar-menu has-divider>
           <nav-bar-item-label
             :icon="mdiMenu"
             label="Sample menu"
@@ -135,8 +135,8 @@ const logout = () => {
               />
             </nav-bar-item>
           </template>
-        </nav-bar-menu>
-        <nav-bar-menu has-divider>
+        </nav-bar-menu> -->
+        <!-- <nav-bar-menu has-divider>
           <nav-bar-item-label :label="userName">
             <user-avatar class="w-6 h-6 mr-3 inline-flex" />
           </nav-bar-item-label>
@@ -168,8 +168,8 @@ const logout = () => {
               />
             </nav-bar-item>
           </template>
-        </nav-bar-menu>
-        <nav-bar-item
+        </nav-bar-menu> -->
+        <!-- <nav-bar-item
           has-divider
           is-desktop-icon-only
           @click.prevent="toggleLightDark"
@@ -179,8 +179,8 @@ const logout = () => {
             label="Light/Dark"
             is-desktop-icon-only
           />
-        </nav-bar-item>
-        <nav-bar-item
+        </nav-bar-item> -->
+        <!-- <nav-bar-item
           href="https://github.com/justboil/admin-one-vue-tailwind"
           has-divider
           is-desktop-icon-only
@@ -190,7 +190,7 @@ const logout = () => {
             label="GitHub"
             is-desktop-icon-only
           />
-        </nav-bar-item>
+        </nav-bar-item> -->
         <nav-bar-item
           is-desktop-icon-only
           @click="logout"

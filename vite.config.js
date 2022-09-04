@@ -12,7 +12,7 @@ export default defineConfig({
       imports: ['vue', 'vue-router', 'pinia'],
     }),
     Components({
-      // 從 `./src/components/` 路徑查找
+      // 預設從 `./src/components/` 路徑查找
       extensions: ['vue'],
       include: [/\.vue$/, /\.vue\?vue/],
     }),

@@ -10,7 +10,8 @@ const routes = [
     },
     path: '/',
     name: 'style',
-    component: Style
+    // component: Style
+    redirect: { name: 'products' }
   },
   {
     // Document title tag

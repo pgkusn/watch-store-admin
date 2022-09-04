@@ -28,7 +28,7 @@ const overlayClick = () => {
   <nav-bar />
   <aside-menu :menu="menu" />
   <router-view />
-  <footer-bar />
+  <!-- <footer-bar /> -->
   <overlay v-show="isAsideLgActive" z-index="z-30" @overlay-click="overlayClick" />
   <Transition>
     <div

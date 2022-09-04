@@ -66,7 +66,7 @@ const menuClick = (event, item) => {
         <span>Admin</span> <b class="font-black">One</b>
       </div>
     </div>
-    <div>
+    <div class="pt-2">
       <template v-for="(menuGroup, index) in menu">
         <p
           v-if="typeof menuGroup === 'string'"
