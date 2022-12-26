@@ -28,7 +28,9 @@ brandRequest.interceptors.response.use(
   }
 )
 
-export const apiPostBrands = data => brandRequest.post('brands.json', data).then(res => res.data)
-export const apiGetBrands = () => brandRequest.get('brands.json').then(res => res.data)
-export const apiPatchBrands = (id, data) => brandRequest.patch(`brands/${id}.json`, data).then(res => res.data)
-export const apiDeleteBrands = (id, data) => brandRequest.delete(`brands/${id}.json`, data).then(res => res.data)
+export const apiPostBrands = data => brandRequest.post('/brands.json', data).then(res => res.data)
+export const apiGetBrands = () => brandRequest.get('/brands.json').then(res => res.data)
+export const apiPatchBrands = (id, data) =>
+  brandRequest.patch(`/brands/${id}.json`, data).then(res => res.data)
+export const apiDeleteBrands = (id, data) =>
+  brandRequest.delete(`/brands/${id}.json`, data).then(res => res.data)

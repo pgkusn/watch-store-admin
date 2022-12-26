@@ -54,5 +54,6 @@ authRequest.interceptors.response.use(
 )
 
 export const apiPostLogin = data =>
-  authRequest.post('accounts:signInWithPassword', data).then(res => res.data)
-export const apiPostLookup = data => authRequest.post('accounts:lookup', data).then(res => res.data)
+  authRequest.post('/accounts:signInWithPassword', data).then(res => res.data)
+export const apiPostLookup = data =>
+  authRequest.post('/accounts:lookup', data).then(res => res.data)
