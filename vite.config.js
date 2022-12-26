@@ -23,6 +23,7 @@ export default defineConfig({
     },
   },
   css: {
-    devSourcemap: true
-  }
+    devSourcemap: true,
+  },
+  base: '/watch-store-admin/',
 })
