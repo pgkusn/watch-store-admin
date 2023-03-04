@@ -9,8 +9,8 @@ import Icon from '@/components/Icon.vue'
 defineProps({
   menu: {
     type: Array,
-    default: () => []
-  }
+    default: () => [],
+  },
 })
 
 const mainStore = useMainStore()
@@ -42,13 +42,16 @@ const menuClick = (event, item) => {
   <aside
     v-show="!isFullScreen"
     id="aside"
-    class="w-60 fixed top-0 z-40 h-screen transition-position lg:left-0
-    dark:border-r dark:border-gray-800 dark:bg-gray-900/70 lg:dark:bg-gray-900 xl:dark:bg-gray-900/70"
-    :class="[ asideStyle, isAsideMobileExpanded ? 'left-0' : '-left-60', isAsideLgActive ? 'block' : 'lg:hidden xl:block' ]"
+    class="fixed top-0 z-40 h-screen w-60 transition-position dark:border-r dark:border-gray-800 dark:bg-gray-900/70 lg:left-0 lg:dark:bg-gray-900 xl:dark:bg-gray-900/70"
+    :class="[
+      asideStyle,
+      isAsideMobileExpanded ? 'left-0' : '-left-60',
+      isAsideLgActive ? 'block' : 'lg:hidden xl:block',
+    ]"
   >
     <div
-      class="flex flex-row w-full flex-1 h-14 items-center dark:bg-transparent"
-      :class="[ asideBrandStyle ]"
+      class="flex h-14 w-full flex-1 flex-row items-center dark:bg-transparent"
+      :class="[asideBrandStyle]"
     >
       <nav-bar-item
         type="hidden lg:flex xl:hidden"
@@ -56,15 +59,9 @@ const menuClick = (event, item) => {
         active
         @click="asideLgClose"
       >
-        <icon
-          :path="mdiMenu"
-          class="cursor-pointer"
-          size="24"
-        />
+        <icon :path="mdiMenu" class="cursor-pointer" size="24" />
       </nav-bar-item>
-      <div class="flex-1 px-3">
-        <span>Admin</span> <b class="font-black">One</b>
-      </div>
+      <div class="flex-1 px-3 text-center"><b class="font-black">Watch Store Admin</b></div>
     </div>
     <div class="pt-2">
       <template v-for="(menuGroup, index) in menu">
@@ -72,16 +69,11 @@ const menuClick = (event, item) => {
           v-if="typeof menuGroup === 'string'"
           :key="`a-${index}`"
           class="p-3 text-xs uppercase"
-          :class="[ asideMenuLabelStyle ]"
+          :class="[asideMenuLabelStyle]"
         >
           {{ menuGroup }}
         </p>
-        <aside-menu-list
-          v-else
-          :key="`b-${index}`"
-          :menu="menuGroup"
-          @menu-click="menuClick"
-        />
+        <aside-menu-list v-else :key="`b-${index}`" :menu="menuGroup" @menu-click="menuClick" />
       </template>
     </div>
   </aside>

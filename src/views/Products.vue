@@ -98,7 +98,7 @@
             min="0"
             max="1"
             step="0.01"
-            class="h-12 rounded border-gray-700"
+            class="h-12 rounded border-gray-700 dark:bg-gray-800"
           />
         </field>
       </div>
@@ -150,7 +150,7 @@
             min="0"
             max="1"
             step="0.01"
-            class="h-12 rounded border-gray-700"
+            class="h-12 rounded border-gray-700 dark:bg-gray-800"
           />
         </field>
       </div>
@@ -343,7 +343,7 @@ const newProduct = reactive({
   ],
   get url() {
     return this.imageUrl[0] // cover
-  }
+  },
 })
 const openCreateModal = () => {
   isModalActive.create = true

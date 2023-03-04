@@ -33,7 +33,7 @@ if (
 }
 
 /* Default title tag */
-const defaultDocumentTitle = 'Admin One Vue 3 Tailwind'
+const defaultDocumentTitle = 'Watch Store Admin'
 
 /* Collapse mobile aside menu on route change */
 router.beforeEach(to => {
