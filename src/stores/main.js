@@ -49,7 +49,7 @@ export const useMainStore = defineStore('main', {
     notificationState: {},
   }),
   actions: {
-    setUser (payload) {
+    setUser(payload) {
       if (payload.name) {
         this.userName = payload.name
       }
@@ -61,7 +61,7 @@ export const useMainStore = defineStore('main', {
       }
     },
 
-    setStyle (payload) {
+    setStyle(payload) {
       const style = styles[payload] ?? styles.basic
 
       document.body.className = style.body
@@ -80,7 +80,7 @@ export const useMainStore = defineStore('main', {
       }
     },
 
-    asideMobileToggle (payload = null) {
+    asideMobileToggle(payload = null) {
       const isShow = payload !== null ? payload : !this.isAsideMobileExpanded
 
       document.getElementById('app').classList[isShow ? 'add' : 'remove']('ml-60', 'lg:ml-0')
@@ -90,17 +90,17 @@ export const useMainStore = defineStore('main', {
       this.isAsideMobileExpanded = isShow
     },
 
-    asideLgToggle (payload = null) {
+    asideLgToggle(payload = null) {
       this.isAsideLgActive = payload !== null ? payload : !this.isAsideLgActive
     },
 
-    fullScreenToggle (payload) {
+    fullScreenToggle(payload) {
       this.isFullScreen = payload
 
       document.documentElement.classList[payload ? 'add' : 'remove']('full-screen')
     },
 
-    setDarkMode (payload = null) {
+    setDarkMode(payload = null) {
       const value = payload !== null ? payload : !this.darkMode
 
       document.documentElement.classList[value ? 'add' : 'remove']('dark')
@@ -110,7 +110,7 @@ export const useMainStore = defineStore('main', {
       this.darkMode = value
     },
 
-    fetch (sampleDataKey) {
+    fetch(sampleDataKey) {
       axios
         .get(`data-sources/${sampleDataKey}.json`)
         .then(r => {
@@ -121,6 +121,6 @@ export const useMainStore = defineStore('main', {
         .catch(error => {
           alert(error.message)
         })
-    }
-  }
+    },
+  },
 })
