@@ -10,7 +10,8 @@ import {
   mdiViewList,
   mdiTelevisionGuide,
   mdiResponsive,
-  mdiPalette
+  mdiPalette,
+  mdiDatabase,
 } from '@mdi/js'
 
 export default [
@@ -27,12 +28,12 @@ export default [
     {
       to: '/products',
       label: 'Products',
-      icon: mdiTable
+      icon: mdiTable,
     },
     {
       to: '/brands',
       label: 'Brands',
-      icon: mdiTable
+      icon: mdiDatabase,
     },
     // {
     //   to: '/tables',
