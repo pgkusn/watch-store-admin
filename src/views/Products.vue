@@ -58,7 +58,7 @@
               :label="page + 1"
               :outline="darkMode"
               small
-              @click="currentPage = page"
+              @click="changePage(page)"
             />
           </jb-buttons>
           <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
@@ -195,6 +195,7 @@ import ModalBox from '@/components/ModalBox.vue'
 import { useMainStore } from '@/stores/main'
 import { useProductStore } from '@/stores/product'
 import { formatPrice } from '@/composition/formatPrice'
+import '@/plugins/velocity.min.js'
 
 const mainStore = useMainStore()
 const productStore = useProductStore()
@@ -218,6 +219,10 @@ const resetState = () => {
   currentProduct.id = ''
   currentProduct.data = {}
   files.value.length = 0
+}
+const changePage = page => {
+  currentPage.value = page
+  Velocity(document.documentElement, 'scroll', { offset: 0, mobileHA: false })
 }
 
 // pagination

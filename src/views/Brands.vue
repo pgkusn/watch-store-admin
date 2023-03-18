@@ -52,7 +52,7 @@
               :label="page + 1"
               :outline="darkMode"
               small
-              @click="currentPage = page"
+              @click="changePage(page)"
             />
           </jb-buttons>
           <small>Page {{ currentPageHuman }} of {{ numPages }}</small>
@@ -116,6 +116,7 @@ import JbButton from '@/components/JbButton.vue'
 import ModalBox from '@/components/ModalBox.vue'
 import { useMainStore } from '@/stores/main'
 import { useBrandStore } from '@/stores/brand'
+import '@/plugins/velocity.min.js'
 
 const mainStore = useMainStore()
 const brandStore = useBrandStore()
@@ -136,6 +137,10 @@ const setNotification = (type, message) => {
 const resetState = () => {
   currentBrand.id = ''
   currentBrand.data = {}
+}
+const changePage = page => {
+  currentPage.value = page
+  Velocity(document.documentElement, 'scroll', { offset: 0, mobileHA: false })
 }
 
 // pagination
