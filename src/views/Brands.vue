@@ -241,6 +241,8 @@ const deleteBrand = async () => {
 }
 
 onMounted(() => {
-  getBrands()
+  if (!brands.value.length) {
+    getBrands()
+  }
 })
 </script>

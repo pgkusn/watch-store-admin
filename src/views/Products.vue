@@ -432,6 +432,8 @@ const deleteProduct = async () => {
 }
 
 onMounted(() => {
-  getBrandsAndProducts()
+  if (!brands.value.length || !products.value.length) {
+    getBrandsAndProducts()
+  }
 })
 </script>

@@ -35,6 +35,11 @@ export default [
       label: 'Brands',
       icon: mdiDatabase,
     },
+    {
+      to: '/orders',
+      label: 'Orders',
+      icon: mdiViewList,
+    },
     // {
     //   to: '/tables',
     //   label: 'Tables',
