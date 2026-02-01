@@ -188,8 +188,8 @@
 
 <script setup>
 import { mdiPencil, mdiTrashCan } from '@mdi/js'
-import { initializeApp } from 'firebase/app'
-import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { ref as storageRef, uploadBytes, getDownloadURL } from 'firebase/storage'
+import { storage } from '@/firebase'
 import JbButton from '@/components/JbButton.vue'
 import ModalBox from '@/components/ModalBox.vue'
 import { useMainStore } from '@/stores/main'
@@ -290,16 +290,6 @@ const brandOptions = computed(() =>
 )
 
 // 上傳圖片
-const firebaseConfig = {
-  apiKey: 'AIzaSyCe0etdPskhxSxGh0w_IdZt3FDqcDQWbOo',
-  authDomain: 'perfume-8b21d.firebaseapp.com',
-  databaseURL: 'https://perfume-8b21d-default-rtdb.firebaseio.com',
-  projectId: 'perfume-8b21d',
-  storageBucket: 'perfume-8b21d.appspot.com',
-  messagingSenderId: '597712973003',
-  appId: '1:597712973003:web:de7dde8daa03a2d47c7f4e',
-}
-const storage = getStorage(initializeApp(firebaseConfig))
 const files = ref([])
 const previewUrl = computed(() =>
   files.value.map(file => (file ? URL.createObjectURL(file) : null))
