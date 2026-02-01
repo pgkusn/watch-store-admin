@@ -331,10 +331,10 @@ const newProduct = reactive({
   price: '',
   discount: 1,
   imageUrl: [
-    'https://fakeimg.ryd.tools/?text=photo',
-    'https://fakeimg.ryd.tools/?text=photo',
-    'https://fakeimg.ryd.tools/?text=photo',
-    'https://fakeimg.ryd.tools/?text=photo',
+    'https://fakeimg.ryd.tools/1080x1080/?text=photo',
+    'https://fakeimg.ryd.tools/1080x1080/?text=photo',
+    'https://fakeimg.ryd.tools/1080x1080/?text=photo',
+    'https://fakeimg.ryd.tools/1080x1080/?text=photo',
   ],
   get url() {
     return this.imageUrl[0] // cover
